@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<form method="post" action="topjava" enctype="application/x-www-form-urlencoded">
+<form method="post" action="meals" enctype="application/x-www-form-urlencoded">
     <input type="hidden" name="mealId" value="${meal.mealId}">
     <dl>
         <dt>Дата</dt>
@@ -29,8 +29,8 @@
         <dd><input type="text" name='cCals' size=50 value="${meal.calories}"></dd>
     </dl>
     <button type="submit">Сохранить</button>
-    <button onclick="window.history.back()">Отменить</button>
 </form>
+<button onclick="window.history.back()">Отменить</button>
 
 </body>
 </html>

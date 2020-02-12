@@ -6,18 +6,16 @@ import java.util.List;
 
 public interface Storage {
 
-    void clear();
-
     void update(Meal meal);
 
     void save(Meal meal);
 
-    Meal get(int mealId);
+    Meal getById(int mealId);
 
     void delete(int mealId);
 
-    boolean checkExistence(int mealId);
-
     List<Meal> getAll();
+
+    boolean checkExistence(int mealId);
 }
 

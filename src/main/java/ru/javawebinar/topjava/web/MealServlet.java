@@ -1,11 +1,9 @@
 package ru.javawebinar.topjava.web;
 
-import org.slf4j.Logger;
-
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.storage.ConcurrentHashMapStorage;
 import ru.javawebinar.topjava.storage.Storage;
-import ru.javawebinar.topjava.Config;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletConfig;
@@ -21,18 +19,25 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private Storage storage;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        storage = Config.get().getStorage();
+    public void init(ServletConfig config) {
+        storage = new ConcurrentHashMapStorage();
+        storage.save(new Meal(1, LocalDateTime.of(2020, 1, 1, 7, 20), "Завтрак", 700));
+        storage.save(new Meal(2, LocalDateTime.of(2020, 1, 1, 14, 30), "Обед", 2700));
+        storage.save(new Meal(3, LocalDateTime.of(2020, 1, 1, 19, 00), "Ужин", 600));
+        storage.save(new Meal(4, LocalDateTime.of(2020, 1, 2, 7, 20), "Завтрак", 780));
+        storage.save(new Meal(5, LocalDateTime.of(2020, 1, 2, 14, 30), "Обед", 2300));
+        storage.save(new Meal(6, LocalDateTime.of(2020, 1, 2, 19, 00), "Ужин", 400));
+        storage.save(new Meal(7, LocalDateTime.of(2020, 1, 3, 7, 20), "Завтрак", 500));
+        storage.save(new Meal(8, LocalDateTime.of(2020, 1, 3, 14, 30), "Обед", 2000));
+        storage.save(new Meal(9, LocalDateTime.of(2020, 1, 3, 19, 00), "Ужин", 800));
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String mealId = request.getParameter("mealId");
         String date = request.getParameter("date");
@@ -49,7 +54,7 @@ public class MealServlet extends HttpServlet {
         } else {
             storage.save(meal);
         }
-        response.sendRedirect("/topjava");
+        response.sendRedirect("");
     }
 
     @Override
@@ -60,31 +65,31 @@ public class MealServlet extends HttpServlet {
             String mealId = request.getParameter("mealId");
             if (action.equals("delete")) {
                 storage.delete(Integer.parseInt(mealId));
-                response.sendRedirect("/topjava");
+                response.sendRedirect("meals");
                 return;
             }
             if (action.equals("edit")) {
                 Meal meal;
                 if (mealId.equals("new")) {
-                    meal = new Meal(ThreadLocalRandom.current().nextInt(0, 2_147_483_647), LocalDateTime.now(), "", 0);
+                    meal = new Meal(LocalDateTime.now(), "", 0);
                 } else {
-                    meal = storage.get(Integer.parseInt(mealId));
+                    meal = storage.getById(Integer.parseInt(mealId));
                 }
                 request.setAttribute("meal", meal);
-                request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
+                request.getRequestDispatcher("edit.jsp")
                         .forward(request, response);
                 return;
             }
-            response.sendRedirect("/topjava");
+            response.sendRedirect("meals");
             return;
         }
         String ccal = request.getParameter("ccal");
         if (ccal == null) {
             ccal = "1000000";
         }
-        List<MealTo> mealsToList = MealsUtil.listMealsTo(storage.getAll(), Integer.parseInt(ccal));
+        List<MealTo> mealsToList = MealsUtil.filteredByStreams(storage.getAll(), LocalTime.MIN, LocalTime.MAX, Integer.parseInt(ccal));
         request.setAttribute("mealsToList", mealsToList);
-        request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp")
+        request.getRequestDispatcher("meals.jsp")
                 .forward(request, response);
     }
 }

@@ -43,9 +43,9 @@
         </td>
         <td align="center">${mealTo.calories}
         </td>
-        <td><a href="meals.jsp/?action=delete&mealId=${mealTo.mealId}">Удалить</a>
+        <td><a href="meals?action=delete&mealId=${mealTo.mealId}">Удалить</a>
         </td>
-        <td><a href="edit.jsp/?action=edit&mealId=${mealTo.mealId}">Изменить</a>
+        <td><a href="meals?action=edit&mealId=${mealTo.mealId}">Изменить</a>
         </td>
     </tr>
     </c:forEach>
@@ -55,7 +55,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td><a href="edit.jsp/?action=edit&mealId=new">Добавить</a></td>
+        <td><a href="meals?action=edit&mealId=new">Добавить</a></td>
     </tr>
 </table>
 </body>

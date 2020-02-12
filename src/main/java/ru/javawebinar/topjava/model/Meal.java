@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Meal {
     private final int mealId;
@@ -12,6 +13,13 @@ public class Meal {
 
     public Meal(int mealId, LocalDateTime dateTime, String description, int calories) {
         this.mealId = mealId;
+        this.dateTime = dateTime;
+        this.description = description;
+        this.calories = calories;
+    }
+
+    public Meal(LocalDateTime dateTime, String description, int calories) {
+        this.mealId = ThreadLocalRandom.current().nextInt(0, 2_147_483_647);
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;

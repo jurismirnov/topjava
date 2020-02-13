@@ -33,11 +33,11 @@
     <tr style="background: indianred">
         </c:if>
         <c:if test="${!mealTo.excess}">
-    <tr>
+    <tr style="background: aquamarine">
         </c:if>
-        <td><%=DateTimeFormatter.ofPattern("dd MMM yyyy").format(mealTo.getDateTime())%>
+        <td><%=DateTimeFormatter.ofPattern("dd.MM.yyyy").format(mealTo.getDateTime())%>
         </td>
-        <td><%=DateTimeFormatter.ofPattern("H : mm").format(mealTo.getDateTime())%>
+        <td><%=DateTimeFormatter.ofPattern("H:mm").format(mealTo.getDateTime())%>
         </td>
         <td>${mealTo.description}
         </td>

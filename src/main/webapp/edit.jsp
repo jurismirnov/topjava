@@ -12,13 +12,13 @@
     <input type="hidden" name="mealId" value="${meal.mealId}">
     <dl>
         <dt>Дата</dt>
-        <dd><input type="text" name='date' size=50
-                   value="<%=DateTimeFormatter.ofPattern("dd MMM yyyy").format(meal.getDateTime())%>"></dd>
+        <dd><input type="date" name='date' size=50
+                   value="<%=DateTimeFormatter.ofPattern("dd-mm-yyyy").format(meal.getDateTime())%>"></dd>
     </dl>
     <dl>
         <dt>Время</dt>
-        <dd><input type="text" name='time' size=7
-                   value="<%=DateTimeFormatter.ofPattern("H : mm").format(meal.getDateTime())%>"></dd>
+        <dd><input type="time" name='time' size=7
+                   value="<%=DateTimeFormatter.ofPattern("H:mm").format(meal.getDateTime())%>"></dd>
     </dl>
     <dl>
         <dt>Описание</dt>

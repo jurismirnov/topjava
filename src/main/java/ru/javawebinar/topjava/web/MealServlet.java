@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 
 public class MealServlet extends HttpServlet {
@@ -41,10 +40,10 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String mealId = request.getParameter("mealId");
         String date = request.getParameter("date");
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate locDate = LocalDate.parse(date, dateFormatter);
         String time = request.getParameter("time");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H : mm");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
         LocalTime locTime = LocalTime.parse(time, timeFormatter);
         String description = request.getParameter("description");
         String cals = request.getParameter("cCals");
@@ -54,7 +53,7 @@ public class MealServlet extends HttpServlet {
         } else {
             storage.save(meal);
         }
-        response.sendRedirect("");
+        response.sendRedirect("meals");
     }
 
     @Override
@@ -83,11 +82,7 @@ public class MealServlet extends HttpServlet {
             response.sendRedirect("meals");
             return;
         }
-        String ccal = request.getParameter("ccal");
-        if (ccal == null) {
-            ccal = "1000000";
-        }
-        List<MealTo> mealsToList = MealsUtil.filteredByStreams(storage.getAll(), LocalTime.MIN, LocalTime.MAX, Integer.parseInt(ccal));
+        List<MealTo> mealsToList = MealsUtil.filteredByStreams(storage.getAll(), LocalTime.MIN, LocalTime.MAX, MealsUtil.CALORIES_LIMIT);
         request.setAttribute("mealsToList", mealsToList);
         request.getRequestDispatcher("meals.jsp")
                 .forward(request, response);

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.ValidationUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,40 +21,40 @@ public class InMemoryMealRepository implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach(this::save);
+        MealsUtil.MEALS.forEach(MEAL -> save(MEAL, MEAL.getUserId()));
     }
 
     @Override
-    public Meal save(Meal meal) {
+    public Meal save(Meal meal, int userId) {
         log.info("save {}", meal);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            repository.put(meal.getId(), meal);
-            return meal;
+            meal.setUserId(SecurityUtil.authUserId());
         }
-        return repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        if (userId != SecurityUtil.authUserId()) {
+            return null;
+        }
+        return repository.merge(meal.getId(), meal, (oldValue, newValue) -> newValue);
     }
 
     @Override
     public boolean delete(int id, int userId) {
         log.info("delete{}", id);
-        if (repository.get(id).getUserId().equals(userId)) {
+        if (ValidationUtil.checkNotFoundWithId(repository.get(id), id).getUserId().equals(userId)) {
             return repository.remove(id) != null;
         } else {
             return false;
-            //throw new NotFoundException("Repository delete: Meal not found or belongs to another user!");
         }
     }
 
     @Override
     public Meal get(int id, int userId) {
         log.info("get{}", id);
-        Meal meal = repository.get(id);
+        Meal meal = ValidationUtil.checkNotFoundWithId(repository.get(id), id);
         if (meal.getUserId().equals(userId)) {
             return meal;
         } else {
             return null;
-            //throw new NotFoundException("Repository get: Meal not found or belongs to another user!");
         }
     }
 

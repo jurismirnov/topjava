@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.Collection;
 
@@ -19,7 +20,7 @@ public class MealService {
     }
 
     public Meal create(Meal meal) {
-        return repository.save(meal);
+        return repository.save(meal, SecurityUtil.authUserId());
     }
 
     public void delete(int id, int userId) {
@@ -35,6 +36,6 @@ public class MealService {
     }
 
     public void update(Meal meal) {
-        checkNotFoundWithId(repository.save(meal),meal.getId());
+        checkNotFoundWithId(repository.save(meal,SecurityUtil.authUserId()),meal.getId());
     }
 }

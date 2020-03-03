@@ -14,6 +14,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Arrays;
+import java.util.List;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -60,8 +62,7 @@ public class MealServiceTest {
 
     @Test
     public void get() throws Exception {
-        Meal actual = service.get(ADMIN_MEAL_ID, ADMIN_ID);
-        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL1);
+        Assert.assertEquals(ADMIN_MEAL1,service.get(ADMIN_MEAL_ID, ADMIN_ID));
     }
 
     @Test(expected = NotFoundException.class)
@@ -88,19 +89,20 @@ public class MealServiceTest {
 
     @Test
     public void getAll() throws Exception {
-        MEAL_MATCHER.assertMatch(service.getAll(USER_ID), MEALS);
+        Assert.assertEquals(MEALS,service.getAll(USER_ID));
     }
 
     @Test
     public void getBetweenInclusive() throws Exception {
-        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(
-                LocalDate.of(2020, Month.JANUARY, 30),
-                LocalDate.of(2020, Month.JANUARY, 30), USER_ID),
-                MEAL3, MEAL2, MEAL1);
+        Assert.assertEquals(Arrays.asList(MEAL3, MEAL2, MEAL1),
+                service.getBetweenInclusive(
+                        LocalDate.of(2020, Month.JANUARY, 30),
+                        LocalDate.of(2020, Month.JANUARY, 30), USER_ID));
     }
 
     @Test
     public void getBetweenWithNullDates() throws Exception {
-        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), MEALS);
+        // MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), MEALS);
+        Assert.assertEquals(MEALS, service.getBetweenInclusive(null, null, USER_ID));
     }
 }

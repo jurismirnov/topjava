@@ -1,13 +1,13 @@
 package ru.javawebinar.topjava.model;
 
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,19 +31,17 @@ public class Meal extends AbstractBaseEntity {
     public static final String GET_BETWEEN_HALF_OPEN = "Meal.getBetweenHalfOpen";
 
     @Column(name = "date_time", nullable = false)
-    @DateTimeFormat
-    @NotBlank
-    @Size(max = 40)
+    @DateTimeFormat()
     private LocalDateTime dateTime;
 
     @Column(name = "description", nullable = false)
     @NotBlank
-    @Size(max = 255)
+    @Length(max = 255)
     private String description;
 
     @Column(name = "calories", nullable = false)
     @NumberFormat
-    @NotBlank
+    @NotNull
     @Range(min = 10, max = 10000)
     private int calories;
 

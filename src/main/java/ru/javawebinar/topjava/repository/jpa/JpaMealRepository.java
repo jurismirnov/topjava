@@ -27,9 +27,18 @@ public class JpaMealRepository implements MealRepository {
             User ref = em.getReference(User.class, userId);
             meal.setUser(ref);
             em.persist(meal);
-            return meal;
+        } else {
+            if (em.createNamedQuery(Meal.UPDATE)
+                    .setParameter("description", meal.getDescription())
+                    .setParameter("calories", meal.getCalories())
+                    .setParameter("datetime", meal.getDateTime())
+                    .setParameter("id", meal.getId())
+                    .setParameter("userId", userId)
+                    .executeUpdate() == 0) {
+                return null;
+            }
         }
-        return em.merge(meal);
+        return meal;
     }
 
     @Override
@@ -43,7 +52,14 @@ public class JpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return em.find(Meal.class, id);
+        List<Meal> mealList = em.createNamedQuery(Meal.GET, Meal.class)
+                .setParameter("id", id)
+                .setParameter("userId", userId)
+                .getResultList();
+        if (mealList.size() ==0){
+            return null;
+        }
+        return mealList.get(0);
     }
 
     @Override
@@ -56,9 +72,9 @@ public class JpaMealRepository implements MealRepository {
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDate, LocalDateTime endDate, int userId) {
         return em.createNamedQuery(Meal.GET_BETWEEN_HALF_OPEN, Meal.class)
-                .setParameter("userId",userId)
-                .setParameter("startDateTime",startDate)
-                .setParameter("endDateTime",endDate)
+                .setParameter("userId", userId)
+                .setParameter("startDateTime", startDate)
+                .setParameter("endDateTime", endDate)
                 .getResultList();
     }
 }

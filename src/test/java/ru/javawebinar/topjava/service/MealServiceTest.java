@@ -62,7 +62,7 @@ public class MealServiceTest {
 
     @Test
     public void get() throws Exception {
-        Assert.assertEquals(ADMIN_MEAL1,service.get(ADMIN_MEAL_ID, ADMIN_ID));
+        Assert.assertEquals(ADMIN_MEAL1, service.get(ADMIN_MEAL_ID, ADMIN_ID));
     }
 
     @Test(expected = NotFoundException.class)
@@ -79,7 +79,8 @@ public class MealServiceTest {
     public void update() throws Exception {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), updated);
+        Assert.assertEquals(updated, service.get(MEAL1_ID, USER_ID));
+        //  MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
     @Test(expected = NotFoundException.class)
@@ -89,7 +90,7 @@ public class MealServiceTest {
 
     @Test
     public void getAll() throws Exception {
-        Assert.assertEquals(MEALS,service.getAll(USER_ID));
+        Assert.assertEquals(MEALS, service.getAll(USER_ID));
     }
 
     @Test

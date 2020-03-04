@@ -23,12 +23,12 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
+        User ref = em.getReference(User.class, userId);
         if (meal.isNew()) {
-            User ref = em.getReference(User.class, userId);
             meal.setUser(ref);
             em.persist(meal);
         } else {
-            if (em.createNamedQuery(Meal.UPDATE)
+            if (em.createNativeQuery("UPDATE Meals m SET description=:description, calories=:calories, date_time=:datetime WHERE m.id=:id AND m.user_id=:userId")
                     .setParameter("description", meal.getDescription())
                     .setParameter("calories", meal.getCalories())
                     .setParameter("datetime", meal.getDateTime())
@@ -56,10 +56,10 @@ public class JpaMealRepository implements MealRepository {
                 .setParameter("id", id)
                 .setParameter("userId", userId)
                 .getResultList();
-        if (mealList.size() ==0){
+        if (mealList.size() == 0) {
             return null;
         }
-        return mealList.get(0);
+        return DataAccessUtils.singleResult(mealList);
     }
 
     @Override

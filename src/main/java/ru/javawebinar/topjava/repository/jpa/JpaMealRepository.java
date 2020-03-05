@@ -28,14 +28,10 @@ public class JpaMealRepository implements MealRepository {
             meal.setUser(ref);
             em.persist(meal);
         } else {
-            if (em.createNativeQuery("UPDATE Meals m SET description=:description, calories=:calories, date_time=:datetime WHERE m.id=:id AND m.user_id=:userId")
-                    .setParameter("description", meal.getDescription())
-                    .setParameter("calories", meal.getCalories())
-                    .setParameter("datetime", meal.getDateTime())
-                    .setParameter("id", meal.getId())
-                    .setParameter("userId", userId)
-                    .executeUpdate() == 0) {
+            if  (get(meal.getId(), userId)==null) {
                 return null;
+            } else {
+                em.merge(meal);
             }
         }
         return meal;
@@ -56,9 +52,6 @@ public class JpaMealRepository implements MealRepository {
                 .setParameter("id", id)
                 .setParameter("userId", userId)
                 .getResultList();
-        if (mealList.size() == 0) {
-            return null;
-        }
         return DataAccessUtils.singleResult(mealList);
     }
 

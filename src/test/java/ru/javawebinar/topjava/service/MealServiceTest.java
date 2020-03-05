@@ -80,7 +80,7 @@ public class MealServiceTest {
         Meal updated = getUpdated();
         service.update(updated, USER_ID);
         Assert.assertEquals(updated, service.get(MEAL1_ID, USER_ID));
-        //  MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), updated);
+         // MEAL_MATCHER.assertMatch(service.get(MEAL1_ID, USER_ID), updated);
     }
 
     @Test(expected = NotFoundException.class)
@@ -103,7 +103,7 @@ public class MealServiceTest {
 
     @Test
     public void getBetweenWithNullDates() throws Exception {
-        // MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), MEALS);
-        Assert.assertEquals(MEALS, service.getBetweenInclusive(null, null, USER_ID));
+        MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), MEALS);
+        //Assert.assertEquals(MEALS, service.getBetweenInclusive(null, null, USER_ID));
     }
 }

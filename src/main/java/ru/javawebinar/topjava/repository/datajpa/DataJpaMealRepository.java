@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class DataJpaMealRepository implements MealRepository {
@@ -18,23 +19,18 @@ public class DataJpaMealRepository implements MealRepository {
     @Autowired
     private CrudMealRepository crudRepository;
 
+    @Autowired
+    private CrudUserRepository crudUserRepository;
+
     @Override
     public Meal save(Meal meal, int userId) {
-        if (meal.isNew()) {
-            User user = new User();
-            user.setId(userId);
-            meal.setUser(user);
-            crudRepository.save(meal);
-        } else {
-            Meal ml = get(meal.getId(), userId);
-            if (ml == null) {
+        meal.setUser(crudUserRepository.getOne(userId));
+        if (!meal.isNew()) {
+            if (get(meal.getId(), userId)== null) {
                 return null;
             }
-            ml.setDateTime(meal.getDateTime());
-            ml.setCalories(meal.getCalories());
-            ml.setDescription(meal.getDescription());
-            crudRepository.save(ml);
         }
+        crudRepository.save(meal);
         return meal;
     }
 
@@ -50,8 +46,10 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = crudRepository.findById(id).orElse(null);
-        return meal != null && meal.getUser().getId() == userId ? meal : null;
+        return crudRepository.findById(id)
+                .filter(Objects::nonNull)
+                .filter(m -> m.getUser().getId() == userId)
+                .orElse(null);
     }
 
     @Override
